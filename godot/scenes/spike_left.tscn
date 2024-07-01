@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://d35wmg0bkhi27"]
+
+[ext_resource type="Texture2D" uid="uid://dxhn3qsxoeerq" path="res://sprites/enviroment/ice_spike.png" id="1_okfyd"]
+
+[node name="spike" type="Area2D"]
+position = Vector2(-8, 8)
+collision_layer = 4
+collision_mask = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(8, -8)
+rotation = -1.5708
+texture = ExtResource("1_okfyd")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2(16, 0)
+rotation = -1.5708
+polygon = PackedVector2Array(0, 0, 4, -16, 5, -16, 8, -2, 9, -2, 12, -16, 13, -16, 16, -2, 16, 0)

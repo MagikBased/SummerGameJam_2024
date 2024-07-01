@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://cqxih1fdy3pmf"]
+
+[ext_resource type="Texture2D" uid="uid://hvwuiydxyq1a" path="res://sprites/enviroment/mirror.png" id="1_42hjy"]
+[ext_resource type="Script" path="res://scenes/mirror.gd" id="1_kgxvp"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ktjox"]
+
+[node name="mirror" type="Area2D"]
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("1_kgxvp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_ktjox")
+
+[node name="Sprite2D" type="Sprite2D" parent="." groups=["mirror"]]
+texture = ExtResource("1_42hjy")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

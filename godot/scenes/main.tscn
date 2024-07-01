@@ -1,0 +1,101 @@
+[gd_scene load_steps=5 format=3 uid="uid://b2ksjys8pcv4l"]
+
+[ext_resource type="PackedScene" uid="uid://qgv2tc3txhwv" path="res://scenes/world.tscn" id="1_j6e8o"]
+[ext_resource type="Script" path="res://scenes/main.gd" id="1_s0aeg"]
+[ext_resource type="Material" uid="uid://q0c2b7ewd3mc" path="res://custom_resources/GreenFilter.tres" id="3_fsgsv"]
+[ext_resource type="AudioStream" uid="uid://b52hbmwsr8vfy" path="res://music/Frozen Pixels.mp3" id="4_8gyli"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_s0aeg")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="HBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+
+[node name="SubViewport" type="SubViewport" parent="HBoxContainer/SubViewportContainer"]
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+size = Vector2i(158, 180)
+render_target_update_mode = 4
+
+[node name="World" parent="HBoxContainer/SubViewportContainer/SubViewport" instance=ExtResource("1_j6e8o")]
+
+[node name="Camera2D" type="Camera2D" parent="HBoxContainer/SubViewportContainer/SubViewport"]
+position = Vector2(1, 0)
+position_smoothing_speed = 1.0
+
+[node name="ColorRect" type="ColorRect" parent="HBoxContainer/SubViewportContainer"]
+visible = false
+material = ExtResource("3_fsgsv")
+custom_minimum_size = Vector2(158, 180)
+layout_mode = 2
+
+[node name="Border" type="ColorRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(4, 180)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="SubViewportContainer2" type="SubViewportContainer" parent="HBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+
+[node name="SubViewport2" type="SubViewport" parent="HBoxContainer/SubViewportContainer2"]
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+size = Vector2i(158, 180)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="HBoxContainer/SubViewportContainer2/SubViewport2"]
+position = Vector2(1, 0)
+position_smoothing_speed = 1.0
+
+[node name="ColorRect" type="ColorRect" parent="HBoxContainer/SubViewportContainer2"]
+material = ExtResource("3_fsgsv")
+custom_minimum_size = Vector2(158, 180)
+layout_mode = 2
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_8gyli")
+volume_db = 12.0
+autoplay = true
+
+[node name="Victory" type="ColorRect" parent="." groups=["victory"]]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -20.0
+offset_right = 40.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Victory"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Victory!"
+
+[editable path="HBoxContainer/SubViewportContainer/SubViewport/World"]
