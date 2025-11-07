@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://btktvrdjje6px"]
+
+[ext_resource type="Texture2D" uid="uid://dnftajbscp2tr" path="res://sprites/enviroment/torch.png" id="1_gudr2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mgyph"]
+atlas = ExtResource("1_gudr2")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sn8sk"]
+atlas = ExtResource("1_gudr2")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ur83t"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mgyph")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sn8sk")
+}],
+"loop": true,
+"name": &"flicker",
+"speed": 3.0
+}]
+
+[node name="Torch" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_ur83t")
+animation = &"flicker"
+frame_progress = 0.765343

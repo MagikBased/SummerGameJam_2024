@@ -1,0 +1,100 @@
+[gd_scene load_steps=12 format=3 uid="uid://c1spgfrpl0vgu"]
+
+[ext_resource type="Script" path="res://scenes/player.gd" id="1_273we"]
+[ext_resource type="Resource" uid="uid://dhmpngvkhfeo1" path="res://custom_resources/DefaultMovementData.tres" id="2_o3dyg"]
+[ext_resource type="Texture2D" uid="uid://bb8xldwrj54ot" path="res://sprites/character/player.png" id="3_4y5tk"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_71jul"]
+radius = 4.5
+height = 16.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vf43c"]
+atlas = ExtResource("3_4y5tk")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ovhr5"]
+atlas = ExtResource("3_4y5tk")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rmwnu"]
+atlas = ExtResource("3_4y5tk")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lrdrh"]
+atlas = ExtResource("3_4y5tk")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0evkg"]
+atlas = ExtResource("3_4y5tk")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_eq6x2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vf43c")
+}],
+"loop": true,
+"name": &"death",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ovhr5")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rmwnu")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lrdrh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0evkg")
+}],
+"loop": true,
+"name": &"run",
+"speed": 10.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_occql"]
+radius = 7.0
+height = 16.0
+
+[node name="Player" type="CharacterBody2D" groups=["player"]]
+collision_layer = 2
+collision_mask = 25
+floor_constant_speed = true
+floor_max_angle = 1.0472
+floor_snap_length = 3.0
+script = ExtResource("1_273we")
+movement_data = ExtResource("2_o3dyg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_71jul")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_eq6x2")
+animation = &"run"
+
+[node name="CoyoteTime" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[node name="HurtBox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+shape = SubResource("CapsuleShape2D_occql")
+
+[connection signal="area_entered" from="HurtBox" to="." method="_on_hurt_box_area_entered"]

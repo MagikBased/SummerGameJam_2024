@@ -1,0 +1,19 @@
+[gd_resource type="TileSet" load_steps=8 format=3 uid="uid://b523o8wtmwysa"]
+
+[ext_resource type="PackedScene" uid="uid://bguq78qooxrtx" path="res://scenes/seal.tscn" id="1_7n2en"]
+[ext_resource type="PackedScene" uid="uid://buhdw47qngjec" path="res://scenes/spike.tscn" id="1_thfei"]
+[ext_resource type="PackedScene" uid="uid://0opjo811p073" path="res://scenes/check_point.tscn" id="3_uevd6"]
+[ext_resource type="PackedScene" uid="uid://d35wmg0bkhi27" path="res://scenes/spike_left.tscn" id="4_adj54"]
+[ext_resource type="PackedScene" uid="uid://rqnodqe3eyjg" path="res://scenes/spike_right.tscn" id="5_fsqf0"]
+[ext_resource type="PackedScene" uid="uid://lbvgvk8qf8xd" path="res://scenes/crab.tscn" id="6_xft7e"]
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_ej4yb"]
+scenes/2/scene = ExtResource("1_thfei")
+scenes/3/scene = ExtResource("1_7n2en")
+scenes/4/scene = ExtResource("3_uevd6")
+scenes/6/scene = ExtResource("4_adj54")
+scenes/7/scene = ExtResource("5_fsqf0")
+scenes/8/scene = ExtResource("6_xft7e")
+
+[resource]
+sources/0 = SubResource("TileSetScenesCollectionSource_ej4yb")
