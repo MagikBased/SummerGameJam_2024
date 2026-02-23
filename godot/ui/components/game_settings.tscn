@@ -91,7 +91,28 @@ unique_name_in_owner = true
 layout_mode = 2
 property = "soundvolume"
 
+[node name="AssistModeLabel" type="Label" parent="MarginContainer/GridContainer"]
+layout_mode = 2
+text = "assist_mode_enabled"
+
+[node name="AssistModeToggle" type="CheckButton" parent="MarginContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="GameSpeedLabel" type="Label" parent="MarginContainer/GridContainer"]
+layout_mode = 2
+text = "assist_game_speed"
+
+[node name="GameSpeedSlider" parent="MarginContainer/GridContainer" instance=ExtResource("1_0gpwr")]
+unique_name_in_owner = true
+layout_mode = 2
+property = "game_speed_percent"
+max_value = 100.0
+min_value = 50.0
+step = 5.0
+
 [connection signal="item_selected" from="MarginContainer/GridContainer/LanguageDropdown" to="." method="_on_language_dropdown_item_selected"]
+[connection signal="toggled" from="MarginContainer/GridContainer/AssistModeToggle" to="." method="_on_assist_mode_toggle_toggled"]
 [connection signal="toggled" from="MarginContainer/GridContainer/MasterEnabledToggle" to="." method="_on_master_volume_toggle_toggled"]
 [connection signal="toggled" from="MarginContainer/GridContainer/MusicEnabledToggle" to="." method="_on_music_enabled_toggle_toggled"]
 [connection signal="toggled" from="MarginContainer/GridContainer/SoundEnabledToggle" to="." method="_on_sound_enabled_toggle_toggled"]

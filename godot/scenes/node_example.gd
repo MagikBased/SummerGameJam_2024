@@ -13,11 +13,11 @@ func save_data() -> Dictionary:
 	}
 	
 func _process(delta):
-	if Input.is_action_pressed("ui_right"):
+	if Input.is_action_pressed("move_right"):
 		position.x += 100 * delta
-	if Input.is_action_pressed("ui_left"):
+	if Input.is_action_pressed("move_left"):
 		position.x -= 100 * delta
-	if Input.is_action_pressed("ui_up"):
-			position.y -= 100 * delta
-	if Input.is_action_pressed("ui_down"):
+	if Input.is_action_pressed("move_up"):
+		position.y -= 100 * delta
+	if Input.is_action_pressed("move_down"):
 		position.y += 100 * delta

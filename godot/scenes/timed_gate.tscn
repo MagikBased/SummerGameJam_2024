@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://systems/level/timed_gate.gd" id="1_43mgm"]
+[ext_resource type="Texture2D" uid="uid://5u6k2eug1ldg" path="res://sprites/enviroment/ground_tilemap.png" id="2_rh4u2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_f44t5"]
+size = Vector2(16, 24)
+
+[node name="TimedGate" type="StaticBody2D"]
+script = ExtResource("1_43mgm")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_f44t5")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_rh4u2")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 16)
+scale = Vector2(1, 1.5)
+modulate = Color(0.85098, 0.309804, 0.294118, 1)

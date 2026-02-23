@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/main.tscn" id="1_0syva"]
+[ext_resource type="Script" path="res://scenes/tests/test_harness.gd" id="2_ur06d"]
+
+[node name="TestDeathRespawn" type="Node"]
+script = ExtResource("2_ur06d")
+test_name = "Death and Respawn"
+checklist = PackedStringArray("Touch a hazard with active player.", "Ensure both players play death flow.", "Confirm respawn preserves left/right lane mapping and control ownership.")
+
+[node name="Main" parent="." instance=ExtResource("1_0syva")]

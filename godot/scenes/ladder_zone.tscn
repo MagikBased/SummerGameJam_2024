@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://systems/platformer/ladder_zone.gd" id="1_shr75"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hcr0p"]
+size = Vector2(14, 38)
+
+[node name="LadderZone" type="Area2D"]
+script = ExtResource("1_shr75")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_hcr0p")
+
+[node name="Visual" type="ColorRect" parent="."]
+offset_left = -7.0
+offset_top = -19.0
+offset_right = 7.0
+offset_bottom = 19.0
+color = Color(0.803922, 0.666667, 0.360784, 0.301961)

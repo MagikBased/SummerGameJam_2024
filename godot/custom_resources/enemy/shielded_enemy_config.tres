@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://custom_resources/enemy/enemy_config.gd" id="1_2y8mx"]
+
+[resource]
+script = ExtResource("1_2y8mx")
+patrol_speed = 26.0
+chase_speed = 42.0
+gravity_scale = 1.0
+chase_range = 108.0
+attack_range = 26.0
+attack_cooldown = 0.6
+max_health = 2
+use_alert_state = true
+alert_duration_seconds = 0.25
+requires_line_of_sight = false
+use_ranged_attack = false
+projectile_speed = 160.0
+projectile_lifetime_seconds = 2.0
+shielded_front_only = true
+shield_block_angle_degrees = 120.0

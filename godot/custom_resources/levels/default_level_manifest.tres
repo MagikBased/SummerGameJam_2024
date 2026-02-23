@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="LevelManifest" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://custom_resources/levels/level_manifest.gd" id="1_tg7kq"]
+[ext_resource type="Script" path="res://custom_resources/levels/level_manifest_entry.gd" id="2_6v17j"]
+[ext_resource type="PackedScene" path="res://scenes/main.tscn" id="3_dlh7m"]
+[ext_resource type="PackedScene" path="res://scenes/lane_sandbox_scene.tscn" id="4_t1uxk"]
+[ext_resource type="PackedScene" path="res://scenes/midboss_level_scene.tscn" id="5_hq5m1"]
+
+[sub_resource type="Resource" id="Resource_jd1gc"]
+script = ExtResource("2_6v17j")
+level_id = &"dual_lanes"
+display_name = "Dual Lanes"
+description = "Core mirrored split-screen level with checkpoints and objective completion."
+difficulty = "Normal"
+scene = ExtResource("3_dlh7m")
+bronze_medal_seconds = 120.0
+silver_medal_seconds = 90.0
+gold_medal_seconds = 65.0
+
+[sub_resource type="Resource" id="Resource_8o6fe"]
+script = ExtResource("2_6v17j")
+level_id = &"lane_sandbox"
+display_name = "Lane Sandbox"
+description = "Single-lane sandbox for testing traversal and platform interactions."
+difficulty = "Easy"
+scene = ExtResource("4_t1uxk")
+prerequisite_level_ids = PackedStringArray("dual_lanes")
+bronze_medal_seconds = 75.0
+silver_medal_seconds = 55.0
+gold_medal_seconds = 40.0
+
+[sub_resource type="Resource" id="Resource_t4b4k"]
+script = ExtResource("2_6v17j")
+level_id = &"midboss_trial"
+display_name = "Midboss Trial"
+description = "Face the first midboss after clearing your warm-up levels."
+difficulty = "Hard"
+scene = ExtResource("5_hq5m1")
+prerequisite_level_ids = PackedStringArray("dual_lanes", "lane_sandbox")
+bronze_medal_seconds = 110.0
+silver_medal_seconds = 85.0
+gold_medal_seconds = 60.0
+
+[resource]
+script = ExtResource("1_tg7kq")
+levels = [SubResource("Resource_jd1gc"), SubResource("Resource_8o6fe"), SubResource("Resource_t4b4k")]

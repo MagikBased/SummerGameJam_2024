@@ -1,0 +1,154 @@
+[gd_scene load_steps=27 format=3 uid="uid://cerivby8x7djw"]
+
+[ext_resource type="Script" path="res://scenes/lane_world.gd" id="1_j6i5w"]
+[ext_resource type="PackedScene" uid="uid://blyk3xsinvnp4" path="res://scenes/LevelTileMap.tscn" id="2_ifpcr"]
+[ext_resource type="PackedScene" uid="uid://c1spgfrpl0vgu" path="res://scenes/Player.tscn" id="3_6h5wx"]
+[ext_resource type="PackedScene" uid="uid://0opjo811p073" path="res://scenes/check_point.tscn" id="4_76jlwm"]
+[ext_resource type="PackedScene" uid="uid://buhdw47qngjec" path="res://scenes/spike.tscn" id="5_g5yln"]
+[ext_resource type="PackedScene" uid="uid://d35wmg0bkhi27" path="res://scenes/spike_left.tscn" id="6_4hdv2"]
+[ext_resource type="PackedScene" uid="uid://rqnodqe3eyjg" path="res://scenes/spike_right.tscn" id="7_50in8"]
+[ext_resource type="PackedScene" uid="uid://cqxih1fdy3pmf" path="res://scenes/mirror.tscn" id="8_k8n8m"]
+[ext_resource type="PackedScene" uid="uid://bguq78qooxrtx" path="res://scenes/seal.tscn" id="9_txh17"]
+[ext_resource type="PackedScene" uid="uid://lbvgvk8qf8xd" path="res://scenes/crab.tscn" id="10_65g01"]
+[ext_resource type="PackedScene" uid="uid://btktvrdjje6px" path="res://scenes/torch.tscn" id="11_dvmyc"]
+[ext_resource type="PackedScene" path="res://scenes/breakable_block.tscn" id="12_a8g4k"]
+[ext_resource type="PackedScene" path="res://scenes/falling_platform.tscn" id="13_q6m7w"]
+[ext_resource type="PackedScene" path="res://scenes/bounce_pad.tscn" id="14_d5fjq"]
+[ext_resource type="PackedScene" path="res://scenes/wind_zone.tscn" id="15_v1e8h"]
+[ext_resource type="PackedScene" path="res://scenes/timed_gate.tscn" id="16_14j5v"]
+[ext_resource type="PackedScene" path="res://scenes/pressure_switch.tscn" id="17_tn0g2"]
+[ext_resource type="PackedScene" path="res://scenes/crumble_chain_trigger.tscn" id="18_c6q9e"]
+[ext_resource type="PackedScene" path="res://scenes/camera_zone.tscn" id="19_mx6xj"]
+[ext_resource type="Resource" path="res://custom_resources/enemy/shielded_enemy_config.tres" id="20_s7m21"]
+[ext_resource type="Resource" path="res://custom_resources/enemy/ranged_enemy_config.tres" id="21_e2n10"]
+[ext_resource type="PackedScene" path="res://scenes/moving_platform.tscn" id="22_uio8p"]
+[ext_resource type="PackedScene" path="res://scenes/ladder_zone.tscn" id="23_q1ndm"]
+[ext_resource type="PackedScene" path="res://scenes/water_zone.tscn" id="24_76psh"]
+[ext_resource type="PackedScene" path="res://scenes/moving_hazard.tscn" id="25_t0f7l"]
+[ext_resource type="Script" path="res://systems/enemy/enemy_spawn_director.gd" id="26_hv43x"]
+[ext_resource type="Resource" path="res://custom_resources/enemy/default_loot_table.tres" id="27_4h7ko"]
+
+[node name="LaneWorld" type="Node2D"]
+script = ExtResource("1_j6i5w")
+
+[node name="LevelTileMap" parent="." instance=ExtResource("2_ifpcr")]
+
+[node name="Player" parent="." instance=ExtResource("3_6h5wx")]
+position = Vector2(24, -24)
+
+[node name="Checkpoints" type="Node2D" parent="."]
+
+[node name="CheckpointStart" parent="Checkpoints" instance=ExtResource("4_76jlwm")]
+position = Vector2(24, -8)
+checkpoint_id = 0
+
+[node name="Hazards" type="Node2D" parent="."]
+
+[node name="SpikeFloor01" parent="Hazards" instance=ExtResource("5_g5yln")]
+position = Vector2(128, -16)
+
+[node name="SpikeFloor02" parent="Hazards" instance=ExtResource("5_g5yln")]
+position = Vector2(144, -16)
+
+[node name="SpikeLeftWall01" parent="Hazards" instance=ExtResource("6_4hdv2")]
+position = Vector2(240, -16)
+
+[node name="SpikeRightWall01" parent="Hazards" instance=ExtResource("7_50in8")]
+position = Vector2(304, 16)
+
+[node name="BreakableBlock01" parent="Hazards" instance=ExtResource("12_a8g4k")]
+position = Vector2(176, -24)
+
+[node name="FallingPlatform01" parent="Hazards" instance=ExtResource("13_q6m7w")]
+position = Vector2(336, -40)
+
+[node name="FallingPlatform02" parent="Hazards" instance=ExtResource("13_q6m7w")]
+position = Vector2(364, -48)
+
+[node name="BouncePad01" parent="Hazards" instance=ExtResource("14_d5fjq")]
+position = Vector2(96, -16)
+
+[node name="WindZone01" parent="Hazards" instance=ExtResource("15_v1e8h")]
+position = Vector2(220, -34)
+wind_velocity = Vector2(120, -65)
+
+[node name="TimedGate01" parent="Hazards" instance=ExtResource("16_14j5v")]
+position = Vector2(304, -24)
+auto_close_seconds = 2.6
+
+[node name="PressureSwitch01" parent="Hazards" instance=ExtResource("17_tn0g2")]
+position = Vector2(272, -16)
+target_gate_path = NodePath("../TimedGate01")
+open_duration_seconds = 2.6
+
+[node name="CrumbleTrigger01" parent="Hazards" instance=ExtResource("18_c6q9e")]
+position = Vector2(320, -32)
+platform_paths = [NodePath("../FallingPlatform01"), NodePath("../FallingPlatform02")]
+trigger_interval_seconds = 0.18
+
+[node name="CameraZone01" parent="Hazards" instance=ExtResource("19_mx6xj")]
+position = Vector2(200, -40)
+deadzone_override = Vector2(10, 7)
+look_ahead_x_override = 8.0
+vertical_look_ahead_y_override = 2.0
+smoothing_speed_override = 6.0
+zoom_override = Vector2(1.2, 1.2)
+
+[node name="MovingPlatform01" parent="Hazards" instance=ExtResource("22_uio8p")]
+position = Vector2(124, -48)
+point_a = Vector2(124, -48)
+point_b = Vector2(184, -48)
+speed = 34.0
+wait_time_at_ends = 0.35
+
+[node name="LadderZone01" parent="Hazards" instance=ExtResource("23_q1ndm")]
+position = Vector2(152, -38)
+
+[node name="WaterZone01" parent="Hazards" instance=ExtResource("24_76psh")]
+position = Vector2(352, -16)
+
+[node name="MovingHazard01" parent="Hazards" instance=ExtResource("25_t0f7l")]
+position = Vector2(248, -24)
+point_a = Vector2(248, -24)
+point_b = Vector2(296, -24)
+speed = 58.0
+
+[node name="Objectives" type="Node2D" parent="."]
+
+[node name="MirrorGoal" parent="Objectives" instance=ExtResource("8_k8n8m")]
+position = Vector2(400, -24)
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="SealPatrol01" parent="Enemies" instance=ExtResource("9_txh17")]
+position = Vector2(200, -24)
+config = ExtResource("20_s7m21")
+loot_table = ExtResource("27_4h7ko")
+
+[node name="CrabPatrol01" parent="Enemies" instance=ExtResource("10_65g01")]
+position = Vector2(272, -24)
+config = ExtResource("21_e2n10")
+elite = true
+loot_table = ExtResource("27_4h7ko")
+
+[node name="SpawnDirector" type="Node2D" parent="Enemies"]
+script = ExtResource("26_hv43x")
+spawn_scene = ExtResource("9_txh17")
+spawn_points_root_path = NodePath("SpawnPoints")
+max_alive = 2
+total_to_spawn = 4
+spawn_interval_seconds = 3.5
+start_active = true
+
+[node name="SpawnPoints" type="Node2D" parent="Enemies/SpawnDirector"]
+
+[node name="SpawnPointA" type="Marker2D" parent="Enemies/SpawnDirector/SpawnPoints"]
+position = Vector2(216, -24)
+
+[node name="SpawnPointB" type="Marker2D" parent="Enemies/SpawnDirector/SpawnPoints"]
+position = Vector2(312, -24)
+
+[node name="Decor" type="Node2D" parent="."]
+
+[node name="Torch01" parent="Decor" instance=ExtResource("11_dvmyc")]
+position = Vector2(80, -32)

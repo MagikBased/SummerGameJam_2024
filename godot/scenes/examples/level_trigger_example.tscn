@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://systems/level/level_trigger.gd" id="1_tbjqo"]
+
+[node name="LevelTriggerExample" type="Node2D"]
+
+[node name="StartRunTrigger" type="Area2D" parent="."]
+script = ExtResource("1_tbjqo")
+trigger_id = &"run_start"
+action = &"start_run"
+
+[node name="FinishRunTrigger" type="Area2D" parent="."]
+position = Vector2(128, 0)
+script = ExtResource("1_tbjqo")
+trigger_id = &"run_finish"
+action = &"finish_run"

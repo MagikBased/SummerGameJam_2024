@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://systems/platformer/breakable_block.gd" id="1_he4x6"]
+[ext_resource type="Texture2D" uid="uid://5u6k2eug1ldg" path="res://sprites/enviroment/ground_tilemap.png" id="2_l5v3e"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6mgm8"]
+size = Vector2(16, 16)
+
+[node name="BreakableBlock" type="StaticBody2D"]
+script = ExtResource("1_he4x6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_6mgm8")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_l5v3e")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 16)

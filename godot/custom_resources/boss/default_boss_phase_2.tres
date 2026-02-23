@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BossPhaseData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://custom_resources/boss/boss_phase_data.gd" id="1_bjlce"]
+
+[resource]
+script = ExtResource("1_bjlce")
+phase_name = &"phase_2"
+health_threshold = 1
+move_speed_multiplier = 1.4
+attack_cooldown_multiplier = 0.75
+attack_mode = &"dash_burst"
+projectile_count = 3
+projectile_spread_degrees = 26.0
+dash_speed_multiplier = 1.7
+contact_damage_bonus = 1

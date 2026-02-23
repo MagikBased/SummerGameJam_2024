@@ -1,0 +1,170 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scenes/main.gd" id="1_11nls"]
+[ext_resource type="PackedScene" path="res://scenes/character_lane_midboss.tscn" id="2_y2s4x"]
+[ext_resource type="Material" uid="uid://q0c2b7ewd3mc" path="res://custom_resources/GreenFilter.tres" id="3_8gd0l"]
+[ext_resource type="AudioStream" uid="uid://b52hbmwsr8vfy" path="res://music/Frozen Pixels.mp3" id="4_ptg72"]
+[ext_resource type="Script" path="res://scenes/dual_world_coordinator.gd" id="5_11q5k"]
+[ext_resource type="Script" path="res://scenes/gameplay_validator.gd" id="6_302on"]
+[ext_resource type="Script" path="res://scenes/player_camera_follow.gd" id="7_ayv2q"]
+[ext_resource type="PackedScene" path="res://ui/overlays/level_summary_overlay.tscn" id="9_2te7v"]
+[ext_resource type="PackedScene" path="res://ui/overlays/debug_overlay.tscn" id="10_4vmlq"]
+
+[node name="MidbossLevelScene" type="Node"]
+script = ExtResource("1_11nls")
+level_id = &"midboss_trial"
+bronze_medal_seconds = 110.0
+silver_medal_seconds = 85.0
+gold_medal_seconds = 60.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="HBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+
+[node name="SubViewport" type="SubViewport" parent="HBoxContainer/SubViewportContainer"]
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+size = Vector2i(158, 180)
+render_target_update_mode = 4
+
+[node name="LeftLane" parent="HBoxContainer/SubViewportContainer/SubViewport" instance=ExtResource("2_y2s4x")]
+lane_id = &"left"
+
+[node name="Camera2D" type="Camera2D" parent="HBoxContainer/SubViewportContainer/SubViewport"]
+position = Vector2(1, 0)
+script = ExtResource("7_ayv2q")
+
+[node name="ColorRect" type="ColorRect" parent="HBoxContainer/SubViewportContainer"]
+visible = false
+material = ExtResource("3_8gd0l")
+custom_minimum_size = Vector2(158, 180)
+layout_mode = 2
+
+[node name="Border" type="ColorRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(4, 180)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="SubViewportContainer2" type="SubViewportContainer" parent="HBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+
+[node name="SubViewport2" type="SubViewport" parent="HBoxContainer/SubViewportContainer2"]
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+size = Vector2i(158, 180)
+render_target_update_mode = 4
+
+[node name="RightLane" parent="HBoxContainer/SubViewportContainer2/SubViewport2" instance=ExtResource("2_y2s4x")]
+lane_id = &"right"
+
+[node name="Camera2D" type="Camera2D" parent="HBoxContainer/SubViewportContainer2/SubViewport2"]
+position = Vector2(1, 0)
+script = ExtResource("7_ayv2q")
+
+[node name="ColorRect" type="ColorRect" parent="HBoxContainer/SubViewportContainer2"]
+material = ExtResource("3_8gd0l")
+custom_minimum_size = Vector2(158, 180)
+layout_mode = 2
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_ptg72")
+volume_db = 12.0
+autoplay = true
+
+[node name="DualWorldCoordinator" type="Node" parent="."]
+script = ExtResource("5_11q5k")
+
+[node name="GameplayValidator" type="Node" parent="."]
+script = ExtResource("6_302on")
+
+[node name="Victory" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -20.0
+offset_right = 40.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Victory"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Victory!"
+
+[node name="RunHud" type="Label" parent="."]
+anchors_preset = 10
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -62.0
+offset_top = 8.0
+offset_right = 62.0
+offset_bottom = 32.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+horizontal_alignment = 1
+text = "00:00.000"
+
+[node name="SplitHud" type="Label" parent="."]
+anchors_preset = 10
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -92.0
+offset_top = 28.0
+offset_right = 92.0
+offset_bottom = 52.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.933333, 0.533333, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+horizontal_alignment = 1
+visible = false
+text = "Split +00.000"
+
+[node name="HubButton" type="Button" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -70.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = 28.0
+grow_horizontal = 0
+text = "Hub"
+
+[node name="SummaryUI" type="CanvasLayer" parent="."]
+process_mode = 2
+
+[node name="LevelSummaryOverlay" parent="SummaryUI" instance=ExtResource("9_2te7v")]
+unique_name_in_owner = true
+visible = false
+
+[node name="DebugOverlay" parent="." instance=ExtResource("10_4vmlq")]
+target_level_id = &"midboss_trial"

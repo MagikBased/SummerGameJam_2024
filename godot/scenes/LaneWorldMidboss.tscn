@@ -1,0 +1,72 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scenes/lane_world.gd" id="1_wfrl6"]
+[ext_resource type="PackedScene" uid="uid://blyk3xsinvnp4" path="res://scenes/LevelTileMap.tscn" id="2_6etow"]
+[ext_resource type="PackedScene" uid="uid://c1spgfrpl0vgu" path="res://scenes/Player.tscn" id="3_a8h3y"]
+[ext_resource type="PackedScene" uid="uid://0opjo811p073" path="res://scenes/check_point.tscn" id="4_5h4gt"]
+[ext_resource type="PackedScene" uid="uid://cqxih1fdy3pmf" path="res://scenes/mirror.tscn" id="5_8ln7f"]
+[ext_resource type="PackedScene" path="res://scenes/boss_gate.tscn" id="6_4us85"]
+[ext_resource type="PackedScene" path="res://scenes/midboss.tscn" id="7_1mn8n"]
+[ext_resource type="PackedScene" uid="uid://btktvrdjje6px" path="res://scenes/torch.tscn" id="8_35y77"]
+[ext_resource type="Script" path="res://scenes/midboss_room_controller.gd" id="9_4a4m2"]
+[ext_resource type="PackedScene" path="res://scenes/ladder_zone.tscn" id="10_hudrk"]
+[ext_resource type="PackedScene" path="res://scenes/water_zone.tscn" id="11_av5cf"]
+[ext_resource type="PackedScene" path="res://scenes/moving_hazard.tscn" id="12_j2jn0"]
+
+[node name="LaneWorldMidboss" type="Node2D"]
+script = ExtResource("1_wfrl6")
+
+[node name="LevelTileMap" parent="." instance=ExtResource("2_6etow")]
+
+[node name="Player" parent="." instance=ExtResource("3_a8h3y")]
+position = Vector2(24, -24)
+
+[node name="Checkpoints" type="Node2D" parent="."]
+
+[node name="CheckpointStart" parent="Checkpoints" instance=ExtResource("4_5h4gt")]
+position = Vector2(24, -8)
+checkpoint_id = 0
+
+[node name="CheckpointBossRoom" parent="Checkpoints" instance=ExtResource("4_5h4gt")]
+position = Vector2(232, -8)
+checkpoint_id = 1
+
+[node name="Hazards" type="Node2D" parent="."]
+
+[node name="BossGate" parent="Hazards" instance=ExtResource("6_4us85")]
+position = Vector2(176, -24)
+required_completed_levels = PackedStringArray("dual_lanes", "lane_sandbox")
+
+[node name="LadderZone01" parent="Hazards" instance=ExtResource("10_hudrk")]
+position = Vector2(208, -36)
+
+[node name="WaterZone01" parent="Hazards" instance=ExtResource("11_av5cf")]
+position = Vector2(332, -12)
+
+[node name="MovingHazard01" parent="Hazards" instance=ExtResource("12_j2jn0")]
+position = Vector2(264, -24)
+point_a = Vector2(264, -24)
+point_b = Vector2(328, -24)
+speed = 66.0
+
+[node name="Objectives" type="Node2D" parent="."]
+
+[node name="MirrorGoal" parent="Objectives" instance=ExtResource("5_8ln7f")]
+position = Vector2(392, -24)
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Midboss" parent="Enemies" instance=ExtResource("7_1mn8n")]
+position = Vector2(300, -24)
+
+[node name="Decor" type="Node2D" parent="."]
+
+[node name="TorchLeft" parent="Decor" instance=ExtResource("8_35y77")]
+position = Vector2(136, -32)
+
+[node name="TorchRight" parent="Decor" instance=ExtResource("8_35y77")]
+position = Vector2(352, -32)
+
+[node name="MidbossRoomController" type="Node" parent="."]
+script = ExtResource("9_4a4m2")
+boss_path = NodePath("Enemies/Midboss")

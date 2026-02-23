@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/character_lane.gd" id="1_kwe7w"]
+[ext_resource type="PackedScene" path="res://scenes/LaneWorldMidboss.tscn" id="2_m14aa"]
+
+[node name="CharacterLaneMidboss" type="Node2D"]
+script = ExtResource("1_kwe7w")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="LaneWorld" parent="World" instance=ExtResource("2_m14aa")]

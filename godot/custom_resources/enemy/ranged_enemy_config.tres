@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://custom_resources/enemy/enemy_config.gd" id="1_1q82d"]
+
+[resource]
+script = ExtResource("1_1q82d")
+patrol_speed = 24.0
+chase_speed = 34.0
+gravity_scale = 1.0
+chase_range = 140.0
+attack_range = 120.0
+attack_cooldown = 1.0
+max_health = 1
+use_alert_state = true
+alert_duration_seconds = 0.4
+requires_line_of_sight = true
+use_ranged_attack = true
+projectile_speed = 180.0
+projectile_lifetime_seconds = 2.3
+shielded_front_only = false
+shield_block_angle_degrees = 120.0

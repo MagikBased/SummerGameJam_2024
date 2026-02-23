@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://systems/progression/collectible_pickup.gd" id="1_2hxr8"]
+[ext_resource type="Script" path="res://systems/progression/gate_lock.gd" id="2_07ctu"]
+
+[node name="CollectibleGateExample" type="Node2D"]
+
+[node name="GateVisual" type="ColorRect" parent="."]
+offset_right = 24.0
+offset_bottom = 64.0
+color = Color(0.788235, 0.203922, 0.203922, 1)
+
+[node name="GateLock" type="Node2D" parent="."]
+script = ExtResource("2_07ctu")
+required_key_id = &"ice_key"
+locked_node_path = NodePath("../GateVisual")
+
+[node name="KeyPickup" type="Area2D" parent="."]
+position = Vector2(-64, 0)
+script = ExtResource("1_2hxr8")
+collectible_type = &"key"
+collectible_id = &"ice_key"

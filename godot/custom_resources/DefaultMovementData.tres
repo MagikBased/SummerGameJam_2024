@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="PlayerMovementData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://custom_resources/player_movement_data.gd" id="1_0dkny"]
+
+[resource]
+script = ExtResource("1_0dkny")
+speed = 120.0
+acceleration = 800.0
+friction = 1000.0
+air_acceleration = 500.0
+gravity_scale = 1.0
+jump_velocity = -215.0
+coyote_time_seconds = 0.1
+jump_buffer_seconds = 0.12
+drop_through_seconds = 0.2
+one_way_collision_layer = 5
+wall_slide_max_fall_speed = 60.0
+dash_speed = 240.0
+dash_duration_seconds = 0.14
+dash_cooldown_seconds = 0.45
+dash_invulnerability_seconds = 0.1
+stomp_bounce_velocity = -170.0
+stomp_damage = 1
+damage_invulnerability_seconds = 0.35
+max_air_jumps = 1
+double_jump_unlock_ability = &"double_jump"
+ground_pound_speed = 320.0
+ground_pound_bounce_velocity = -120.0

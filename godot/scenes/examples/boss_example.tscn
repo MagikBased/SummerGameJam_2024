@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://systems/boss/boss_controller.gd" id="1_bv0b2"]
+[ext_resource type="Script" path="res://systems/combat/health_component.gd" id="2_tg8rn"]
+[ext_resource type="Resource" path="res://custom_resources/boss/default_boss_phase_1.tres" id="3_0i5v8"]
+[ext_resource type="Resource" path="res://custom_resources/boss/default_boss_phase_2.tres" id="4_hxqie"]
+
+[node name="BossExample" type="Node2D"]
+
+[node name="Boss" type="CharacterBody2D" parent="."]
+script = ExtResource("1_bv0b2")
+phases = [ExtResource("3_0i5v8"), ExtResource("4_hxqie")]
+health_component_path = NodePath("Health")
+
+[node name="Health" type="Node" parent="Boss"]
+script = ExtResource("2_tg8rn")
+max_health = 3

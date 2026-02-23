@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/main.tscn" id="1_kv7og"]
+[ext_resource type="Script" path="res://scenes/tests/test_harness.gd" id="2_6hujy"]
+
+[node name="TestCheckpointSync" type="Node"]
+script = ExtResource("2_6hujy")
+test_name = "Checkpoint Sync"
+checklist = PackedStringArray("Activate a checkpoint in one lane.", "Confirm matching checkpoint raises in the other lane.", "Force death and verify respawn uses lane-specific checkpoint positions.")
+
+[node name="Main" parent="." instance=ExtResource("1_kv7og")]

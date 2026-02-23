@@ -12,6 +12,8 @@ const MASTERVOLUME = "mastervolume"
 const MUSICVOLUME = "musicvolume"
 const SOUNDVOLUME = "soundvolume"
 const GAME_LANGUAGE = "game_locale"
+const ASSIST_MODE_ENABLED = "assist_mode_enabled"
+const GAME_SPEED_PERCENT = "game_speed_percent"
 
 const AUDIO_BUS_MASTER = "Master"
 const AUDIO_BUS_SOUND = "Sound"
@@ -24,7 +26,9 @@ var USER_SETTING_DEFAULTS = {
 	MASTERVOLUME:100,
 	MUSICVOLUME:70,
 	SOUNDVOLUME:100,
-	GAME_LANGUAGE:"en"
+	GAME_LANGUAGE:"en",
+	ASSIST_MODE_ENABLED:false,
+	GAME_SPEED_PERCENT:100.0
 }
 
 var config:ConfigFile
@@ -34,6 +38,7 @@ func _ready():
 	config.load(SETTINGS_FILE)
 	_configure_audio()
 	_configure_language()
+	_configure_assist_mode()
 	
 func set_value(key, value):
 	config.set_value(SECTION, key, value)
@@ -52,6 +57,8 @@ func set_value(key, value):
 		_mute_bus(SOUNDVOLUME_ENABLED, AUDIO_BUS_SOUND)
 	if key == GAME_LANGUAGE:
 		TranslationServer.set_locale(value)
+	if key == ASSIST_MODE_ENABLED or key == GAME_SPEED_PERCENT:
+		_configure_assist_mode()
 	emit_signal("on_value_change", key, value)
 	
 func get_value(key):
@@ -83,3 +90,11 @@ func _mute_bus(property, bus):
 
 func _configure_language():
 	TranslationServer.set_locale(get_value_with_default(GAME_LANGUAGE, USER_SETTING_DEFAULTS[GAME_LANGUAGE])) 
+
+func _configure_assist_mode() -> void:
+	var assist_enabled := bool(get_value_with_default(ASSIST_MODE_ENABLED, USER_SETTING_DEFAULTS[ASSIST_MODE_ENABLED]))
+	var speed_percent := float(get_value_with_default(GAME_SPEED_PERCENT, USER_SETTING_DEFAULTS[GAME_SPEED_PERCENT]))
+	if not assist_enabled:
+		Engine.time_scale = 1.0
+		return
+	Engine.time_scale = clamp(speed_percent / 100.0, 0.5, 1.0)

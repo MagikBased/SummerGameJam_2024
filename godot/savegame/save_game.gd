@@ -1,35 +1,80 @@
 ## Script that manages saving games.
-class_name SaveGame extends Node
+extends Node
 
 const ENABLED = true
 const ENCRYPTION_KEY = "godotrules"
-const SAVE_GAME_TEMPLATE = "savegame.save"
+const SAVE_GAME_TEMPLATE = "savegame_slot_%d.save"
 const SAVE_GROUP_NAME = "Persist"
-const NODE_DATA = "node_data"
+const MAX_SLOTS = 3
+const PROFILE_FILE = "user://profiles.cfg"
+const PROFILE_SECTION_PREFIX = "slot_"
+const PROFILE_NAME_KEY = "name"
+const PROFILE_PLAYTIME_KEY = "playtime_seconds"
+const PROFILE_LAST_PLAYED_KEY = "last_played_unix"
+const PROFILE_DEATHS_KEY = "deaths"
+const DEFAULT_SLOT_NAME = "Profile %d"
 
-static func delete_save() -> void:
+var _active_slot: int = 1
+var _profile_config: ConfigFile
+var _playtime_accumulator_seconds: float = 0.0
+
+static func get_available_slots() -> Array[int]:
+	return [1, 2, 3]
+
+func _ready() -> void:
+	_profile_config = ConfigFile.new()
+	_profile_config.load(PROFILE_FILE)
+	_ensure_profile_defaults()
+
+func _process(delta: float) -> void:
+	if get_tree() == null:
+		return
+	if get_tree().paused:
+		return
+	_playtime_accumulator_seconds += delta
+
+func set_active_slot(slot: int) -> void:
+	_flush_playtime_to_profile()
+	_active_slot = clampi(slot, 1, MAX_SLOTS)
+	_ensure_profile_defaults()
+
+func get_active_slot() -> int:
+	return _active_slot
+
+func _slot_to_path(slot: int = -1) -> String:
+	var resolved_slot: int = _active_slot if slot <= 0 else clampi(slot, 1, MAX_SLOTS)
+	return "user://" + (SAVE_GAME_TEMPLATE % resolved_slot)
+
+func delete_save(slot: int = -1) -> void:
 	
 	if not ENABLED:
 		return
 		
-	DirAccess.remove_absolute("user://" + SAVE_GAME_TEMPLATE)
+	DirAccess.remove_absolute(_slot_to_path(slot))
+	if slot <= 0:
+		_reset_profile_slot(_active_slot)
+	else:
+		_reset_profile_slot(clampi(slot, 1, MAX_SLOTS))
 
-static func has_save() -> bool:
-	return FileAccess.file_exists("user://" + SAVE_GAME_TEMPLATE)
+func has_save(slot: int = -1) -> bool:
+	return FileAccess.file_exists(_slot_to_path(slot))
 
-static func save_game(tree:SceneTree):
+func save_game(tree: SceneTree, slot: int = -1):
 	
 	if not ENABLED:
 		return
+	_flush_playtime_to_profile()
+	var resolved_slot: int = _active_slot if slot <= 0 else clampi(slot, 1, MAX_SLOTS)
+	_set_profile_value(resolved_slot, PROFILE_LAST_PLAYED_KEY, int(Time.get_unix_time_from_system()))
 	
-	print("Saving game to user://" + SAVE_GAME_TEMPLATE)
+	print("Saving game to %s" % _slot_to_path(slot))
 	
 	var save_file = null
 	
 	if OS.is_debug_build():
-		save_file = FileAccess.open("user://" + SAVE_GAME_TEMPLATE, FileAccess.WRITE)
+		save_file = FileAccess.open(_slot_to_path(slot), FileAccess.WRITE)
 	else:
-		save_file = FileAccess.open_encrypted_with_pass("user://" + SAVE_GAME_TEMPLATE, FileAccess.WRITE, ENCRYPTION_KEY)
+		save_file = FileAccess.open_encrypted_with_pass(_slot_to_path(slot), FileAccess.WRITE, ENCRYPTION_KEY)
 		
 	var save_nodes = tree.get_nodes_in_group(SAVE_GROUP_NAME)
 	
@@ -81,16 +126,62 @@ static func save_game(tree:SceneTree):
 		# Store the save dictionary as a new line in the save file.
 		save_file.store_line(JSON.stringify(save_data))
 
-static func load_game(tree:SceneTree) -> void:
+	# Persist global gameplay state that is not tied to a scene node.
+	save_file.store_line(JSON.stringify({
+		"__gamemanager__": true,
+		"state": GameManager.serialize_state()
+	}))
+	save_file.store_line(JSON.stringify({
+		"__progression__": true,
+		"state": GameProgression.serialize_state()
+	}))
+	save_file.store_line(JSON.stringify({
+		"__runstats__": true,
+		"state": RunStats.serialize_state()
+	}))
+	_save_profile_config()
+
+func load_globals_only(slot: int = -1) -> void:
+	if not ENABLED:
+		return
+	if not has_save(slot):
+		_reset_global_state()
+		return
+	_reset_global_state()
+	var save_file = null
+	if OS.is_debug_build():
+		save_file = FileAccess.open(_slot_to_path(slot), FileAccess.READ)
+	else:
+		save_file = FileAccess.open_encrypted_with_pass(_slot_to_path(slot), FileAccess.READ, ENCRYPTION_KEY)
+	while save_file.get_position() < save_file.get_length():
+		var test_json_conv = JSON.new()
+		test_json_conv.parse(save_file.get_line())
+		var save_data = test_json_conv.get_data()
+		if save_data.has("__gamemanager__") and save_data["__gamemanager__"] == true:
+			if save_data.has("state") and save_data["state"] is Dictionary:
+				GameManager.restore_state(save_data["state"])
+			continue
+		if save_data.has("__progression__") and save_data["__progression__"] == true:
+			if save_data.has("state") and save_data["state"] is Dictionary:
+				GameProgression.restore_state(save_data["state"])
+			continue
+		if save_data.has("__runstats__") and save_data["__runstats__"] == true:
+			if save_data.has("state") and save_data["state"] is Dictionary:
+				RunStats.restore_state(save_data["state"])
+			continue
+
+func load_game(tree:SceneTree, slot: int = -1) -> void:
 	
 	if not ENABLED:
 		return
 
-	if not has_save():
+	if not has_save(slot):
 		print("No save game found. Skipped loading!")
+		_reset_global_state()
 		return
+	_reset_global_state()
 	
-	print("Load game from user://" + SAVE_GAME_TEMPLATE)
+	print("Load game from %s" % _slot_to_path(slot))
 		
 	var save_nodes = tree.get_nodes_in_group(SAVE_GROUP_NAME)
 	
@@ -104,15 +195,28 @@ static func load_game(tree:SceneTree) -> void:
 	var save_file = null
 	
 	if OS.is_debug_build():
-		save_file = FileAccess.open("user://" + SAVE_GAME_TEMPLATE, FileAccess.READ)
+		save_file = FileAccess.open(_slot_to_path(slot), FileAccess.READ)
 	else:
-		save_file = FileAccess.open_encrypted_with_pass("user://" + SAVE_GAME_TEMPLATE, FileAccess.READ, ENCRYPTION_KEY)
+		save_file = FileAccess.open_encrypted_with_pass(_slot_to_path(slot), FileAccess.READ, ENCRYPTION_KEY)
 		
 	while save_file.get_position() < save_file.get_length():
 		# Get the saved dictionary from the next line in the save file
 		var test_json_conv = JSON.new()
 		test_json_conv.parse(save_file.get_line())
 		var save_data = test_json_conv.get_data()
+
+		if save_data.has("__gamemanager__") and save_data["__gamemanager__"] == true:
+			if save_data.has("state") and save_data["state"] is Dictionary:
+				GameManager.restore_state(save_data["state"])
+			continue
+		if save_data.has("__progression__") and save_data["__progression__"] == true:
+			if save_data.has("state") and save_data["state"] is Dictionary:
+				GameProgression.restore_state(save_data["state"])
+			continue
+		if save_data.has("__runstats__") and save_data["__runstats__"] == true:
+			if save_data.has("state") and save_data["state"] is Dictionary:
+				RunStats.restore_state(save_data["state"])
+			continue
 
 		# Firstly, we need to create the object and add it to the tree and set its position.
 		var node = null
@@ -160,3 +264,137 @@ static func load_game(tree:SceneTree) -> void:
 	for key in nodes_by_path:
 		var node = nodes_by_path[key]
 		node.queue_free()
+
+func _reset_global_state() -> void:
+	GameManager.restore_state({})
+	GameProgression.restore_state({})
+	RunStats.restore_state({})
+
+func get_slot_metadata(slot: int = -1) -> Dictionary:
+	_flush_playtime_to_profile()
+	var resolved_slot: int = _active_slot if slot <= 0 else clampi(slot, 1, MAX_SLOTS)
+	var metadata: Dictionary = {
+		"slot": resolved_slot,
+		"has_save": false,
+		"name": get_slot_name(resolved_slot),
+		"completed_levels": 0,
+		"keys": 0,
+		"abilities": 0,
+		"best_time_seconds": -1.0,
+		"playtime_seconds": get_slot_playtime_seconds(resolved_slot),
+		"last_played_unix": get_slot_last_played_unix(resolved_slot),
+		"deaths": get_slot_deaths(resolved_slot)
+	}
+	if not has_save(slot):
+		return metadata
+	metadata["has_save"] = true
+	var global_state: Dictionary = _read_global_state(slot)
+	var progression: Dictionary = global_state.get("progression", {})
+	var runstats: Dictionary = global_state.get("runstats", {})
+	metadata["completed_levels"] = (progression.get("completed_levels", []) as Array).size()
+	metadata["keys"] = (progression.get("keys", []) as Array).size()
+	metadata["abilities"] = (progression.get("abilities", []) as Array).size()
+	metadata["best_time_seconds"] = float(runstats.get("best_time_seconds", -1.0))
+	return metadata
+
+func _read_global_state(slot: int = -1) -> Dictionary:
+	var result: Dictionary = {
+		"gamemanager": {},
+		"progression": {},
+		"runstats": {}
+	}
+	if not has_save(slot):
+		return result
+	var save_file = null
+	if OS.is_debug_build():
+		save_file = FileAccess.open(_slot_to_path(slot), FileAccess.READ)
+	else:
+		save_file = FileAccess.open_encrypted_with_pass(_slot_to_path(slot), FileAccess.READ, ENCRYPTION_KEY)
+	while save_file.get_position() < save_file.get_length():
+		var test_json_conv = JSON.new()
+		test_json_conv.parse(save_file.get_line())
+		var save_data = test_json_conv.get_data()
+		if save_data.has("__gamemanager__") and save_data["__gamemanager__"] == true:
+			if save_data.has("state") and save_data["state"] is Dictionary:
+				result["gamemanager"] = save_data["state"]
+			continue
+		if save_data.has("__progression__") and save_data["__progression__"] == true:
+			if save_data.has("state") and save_data["state"] is Dictionary:
+				result["progression"] = save_data["state"]
+			continue
+		if save_data.has("__runstats__") and save_data["__runstats__"] == true:
+			if save_data.has("state") and save_data["state"] is Dictionary:
+				result["runstats"] = save_data["state"]
+			continue
+	return result
+
+func set_slot_name(slot: int, name: String) -> void:
+	var resolved_slot: int = clampi(slot, 1, MAX_SLOTS)
+	var safe_name: String = name.strip_edges()
+	if safe_name == "":
+		safe_name = DEFAULT_SLOT_NAME % resolved_slot
+	_set_profile_value(resolved_slot, PROFILE_NAME_KEY, safe_name)
+	_save_profile_config()
+
+func get_slot_name(slot: int = -1) -> String:
+	var resolved_slot: int = _active_slot if slot <= 0 else clampi(slot, 1, MAX_SLOTS)
+	return String(_get_profile_value(resolved_slot, PROFILE_NAME_KEY, DEFAULT_SLOT_NAME % resolved_slot))
+
+func get_slot_playtime_seconds(slot: int = -1) -> float:
+	var resolved_slot: int = _active_slot if slot <= 0 else clampi(slot, 1, MAX_SLOTS)
+	var base_seconds: float = float(_get_profile_value(resolved_slot, PROFILE_PLAYTIME_KEY, 0.0))
+	if resolved_slot == _active_slot:
+		return base_seconds + _playtime_accumulator_seconds
+	return base_seconds
+
+func get_slot_last_played_unix(slot: int = -1) -> int:
+	var resolved_slot: int = _active_slot if slot <= 0 else clampi(slot, 1, MAX_SLOTS)
+	return int(_get_profile_value(resolved_slot, PROFILE_LAST_PLAYED_KEY, 0))
+
+func get_slot_deaths(slot: int = -1) -> int:
+	var resolved_slot: int = _active_slot if slot <= 0 else clampi(slot, 1, MAX_SLOTS)
+	return int(_get_profile_value(resolved_slot, PROFILE_DEATHS_KEY, 0))
+
+func record_death() -> void:
+	var current_deaths: int = get_slot_deaths(_active_slot)
+	_set_profile_value(_active_slot, PROFILE_DEATHS_KEY, current_deaths + 1)
+	_save_profile_config()
+
+func _ensure_profile_defaults() -> void:
+	for slot in get_available_slots():
+		if _profile_config.has_section_key(_profile_section(slot), PROFILE_NAME_KEY) == false:
+			_set_profile_value(slot, PROFILE_NAME_KEY, DEFAULT_SLOT_NAME % slot)
+		if _profile_config.has_section_key(_profile_section(slot), PROFILE_PLAYTIME_KEY) == false:
+			_set_profile_value(slot, PROFILE_PLAYTIME_KEY, 0.0)
+		if _profile_config.has_section_key(_profile_section(slot), PROFILE_LAST_PLAYED_KEY) == false:
+			_set_profile_value(slot, PROFILE_LAST_PLAYED_KEY, 0)
+		if _profile_config.has_section_key(_profile_section(slot), PROFILE_DEATHS_KEY) == false:
+			_set_profile_value(slot, PROFILE_DEATHS_KEY, 0)
+	_save_profile_config()
+
+func _reset_profile_slot(slot: int) -> void:
+	_set_profile_value(slot, PROFILE_NAME_KEY, DEFAULT_SLOT_NAME % slot)
+	_set_profile_value(slot, PROFILE_PLAYTIME_KEY, 0.0)
+	_set_profile_value(slot, PROFILE_LAST_PLAYED_KEY, 0)
+	_set_profile_value(slot, PROFILE_DEATHS_KEY, 0)
+	_save_profile_config()
+
+func _profile_section(slot: int) -> String:
+	return "%s%d" % [PROFILE_SECTION_PREFIX, slot]
+
+func _set_profile_value(slot: int, key: String, value: Variant) -> void:
+	_profile_config.set_value(_profile_section(slot), key, value)
+
+func _get_profile_value(slot: int, key: String, default_value: Variant) -> Variant:
+	return _profile_config.get_value(_profile_section(slot), key, default_value)
+
+func _save_profile_config() -> void:
+	_profile_config.save(PROFILE_FILE)
+
+func _flush_playtime_to_profile() -> void:
+	if _playtime_accumulator_seconds <= 0.0:
+		return
+	var current_playtime: float = float(_get_profile_value(_active_slot, PROFILE_PLAYTIME_KEY, 0.0))
+	_set_profile_value(_active_slot, PROFILE_PLAYTIME_KEY, current_playtime + _playtime_accumulator_seconds)
+	_playtime_accumulator_seconds = 0.0
+	_save_profile_config()

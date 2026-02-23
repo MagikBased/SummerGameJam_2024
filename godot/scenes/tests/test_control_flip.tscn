@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/main.tscn" id="1_4eqcb"]
+[ext_resource type="Script" path="res://scenes/tests/test_harness.gd" id="2_mncb2"]
+
+[node name="TestControlFlip" type="Node"]
+script = ExtResource("2_mncb2")
+test_name = "Control Flip"
+checklist = PackedStringArray("Press interact to flip control ownership.", "Verify overlays swap correctly.", "Verify inactive player mirrors active player.")
+
+[node name="Main" parent="." instance=ExtResource("1_4eqcb")]

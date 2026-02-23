@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/overlays/debug_overlay.gd" id="1_vf6pq"]
+
+[node name="DebugOverlay" type="CanvasLayer"]
+script = ExtResource("1_vf6pq")
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 220.0
+offset_bottom = 120.0
+
+[node name="InfoLabel" type="Label" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Debug"

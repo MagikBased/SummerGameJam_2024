@@ -1,8 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://c1spgfrpl0vgu"]
+[gd_scene load_steps=15 format=3 uid="uid://c1spgfrpl0vgu"]
 
 [ext_resource type="Script" path="res://scenes/player.gd" id="1_273we"]
 [ext_resource type="Resource" uid="uid://dhmpngvkhfeo1" path="res://custom_resources/DefaultMovementData.tres" id="2_o3dyg"]
 [ext_resource type="Texture2D" uid="uid://bb8xldwrj54ot" path="res://sprites/character/player.png" id="3_4y5tk"]
+[ext_resource type="Script" path="res://scenes/player_movement.gd" id="4_txl4t"]
+[ext_resource type="Script" path="res://scenes/player_visuals.gd" id="5_176xd"]
+[ext_resource type="Script" path="res://scenes/player_life.gd" id="6_7m7om"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_71jul"]
 radius = 4.5
@@ -32,11 +35,27 @@ region = Rect2(0, 0, 16, 16)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_rmwnu")
+}],
+"loop": true,
+"name": &"dash",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_vf43c")
 }],
 "loop": true,
 "name": &"death",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rmwnu")
+}],
+"loop": true,
+"name": &"fall_fast",
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -90,11 +109,76 @@ animation = &"run"
 wait_time = 0.1
 one_shot = true
 
+[node name="LedgeWallRayLeft" type="RayCast2D" parent="."]
+position = Vector2(-6, -6)
+target_position = Vector2(-6, 0)
+collision_mask = 1
+enabled = true
+
+[node name="LedgeWallRayRight" type="RayCast2D" parent="."]
+position = Vector2(6, -6)
+target_position = Vector2(6, 0)
+collision_mask = 1
+enabled = true
+
+[node name="LedgeTopRayLeft" type="RayCast2D" parent="."]
+position = Vector2(-6, -14)
+target_position = Vector2(0, 8)
+collision_mask = 1
+enabled = true
+
+[node name="LedgeTopRayRight" type="RayCast2D" parent="."]
+position = Vector2(6, -14)
+target_position = Vector2(0, 8)
+collision_mask = 1
+enabled = true
+
 [node name="HurtBox" type="Area2D" parent="."]
 collision_layer = 2
 collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
 shape = SubResource("CapsuleShape2D_occql")
+
+[node name="PlayerMovement" type="Node" parent="."]
+script = ExtResource("4_txl4t")
+
+[node name="PlayerVisuals" type="Node" parent="."]
+script = ExtResource("5_176xd")
+
+[node name="PlayerLife" type="Node" parent="."]
+script = ExtResource("6_7m7om")
+
+[node name="DashSfx" type="AudioStreamPlayer2D" parent="."]
+volume_db = -6.0
+
+[node name="HurtSfx" type="AudioStreamPlayer2D" parent="."]
+volume_db = -4.0
+
+[node name="PoundSfx" type="AudioStreamPlayer2D" parent="."]
+volume_db = -5.0
+
+[node name="DashVfx" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 8
+lifetime = 0.15
+
+[node name="ImpactVfx" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 10
+lifetime = 0.2
+
+[node name="LandingVfx" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 12
+lifetime = 0.16
+
+[node name="SpeedVfx" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 10
+lifetime = 0.18
+
+[node name="FootstepSfx" type="AudioStreamPlayer2D" parent="."]
+volume_db = -8.0
 
 [connection signal="area_entered" from="HurtBox" to="." method="_on_hurt_box_area_entered"]

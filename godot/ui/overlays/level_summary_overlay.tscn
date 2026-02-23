@@ -1,0 +1,73 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/overlays/level_summary_overlay.gd" id="1_1rxu7"]
+
+[node name="LevelSummaryOverlay" type="CenterContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_1rxu7")
+
+[node name="Panel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(280, 170)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="Panel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "Level Complete"
+horizontal_alignment = 1
+
+[node name="TimeLabel" type="Label" parent="Panel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Time: 00:00.000"
+horizontal_alignment = 1
+
+[node name="BestLabel" type="Label" parent="Panel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Best: 00:00.000"
+horizontal_alignment = 1
+
+[node name="MedalLabel" type="Label" parent="Panel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Medal: None"
+horizontal_alignment = 1
+
+[node name="ButtonsRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RetryButton" type="Button" parent="Panel/Margin/VBox/ButtonsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Retry"
+
+[node name="HubButton" type="Button" parent="Panel/Margin/VBox/ButtonsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Hub"
+
+[node name="NextButton" type="Button" parent="Panel/Margin/VBox/ButtonsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Next"
